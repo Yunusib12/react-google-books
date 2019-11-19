@@ -1,32 +1,40 @@
-const db = require('../models');
+const db = require("../models");
 
+// Defining methods for the bookController
 module.exports = {
-
     findAll: function (req, res) {
 
-        db.Book.find()
-            .then((dbBooks) => res.json(dbBooks))
-            .catch(err => res.status(500).json(err))
+        db.Book.find(req.query)
+            .then((dbBook) => res.json(dbBook))
+            .catch(err => res.status(500).json(err));
     },
-
-    create: function (req, res) {
-
-        db.Book.create(req.body)
-            .then((dbBook) => {
-                console.log(dbBook);
-            })
-            .catch(err => res.status(500).json(err))
-    },
-
-    delete: function (req, res) {
+    findById: function (req, res) {
 
         const { id } = req.params;
 
-        db.Book.findByIdAndRemove(id, function (req, res) {
+        db.Book.findById(id)
+            .then((dbBook) => res.json(dbBook))
+            .catch(err => res.status(500).json(err));
+    },
+    create: function (req, res) {
 
-            console.log(res);
+        db.Book.create(req.body)
+            .then((dbBook) => res.json(dbBook))
+            .catch(err => res.status(500).json(err));
+    },
+    update: function (req, res) {
 
-        }).catch(err => res.status(500).json(err))
+        const { id } = req.params;
+        db.Book.findOneAndUpdate({ id: id }, req.body)
+            .then((dbBook) => res.json(dbBook))
+            .catch(err => res.status(500).json(err));
+    },
+    remove: function (req, res) {
+
+        const { id } = req.params;
+        db.Book.findById(id)
+            .then((dbBook) => dbBook.remove())
+            .then((dbBook) => res.json(dbBook))
+            .catch(err => res.status(500).json(err));
     }
-
-}
+};
